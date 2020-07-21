@@ -63,7 +63,7 @@ function(enable_sanitizers project_name)
                 "${LIST_OF_SANITIZERS}"
                 STREQUAL
                 "")
-            target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+            target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS} -fno-omit-frame-pointer -g)
             target_link_libraries(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
         endif()
     endif()

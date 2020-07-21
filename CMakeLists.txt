@@ -12,31 +12,22 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_17)
-
-# Find custom cmake modules
-#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
+# Link this 'library' to use the warnings specified in CompilerWarnings.cmake
+add_library(project_warnings INTERFACE)
+# standard compiler warnings
+include(cmake/warnings.cmake)
+set_project_warnings(project_warnings)
+
+# Link this 'library' to set the c++ standard / compile-time options requested
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_17)
+
 # sanitizer options if supported by compiler
-include(cmake/Sanitizers.cmake)
+include(cmake/sanitizers.cmake)
 enable_sanitizers(project_options)
-
-# Set the CMake standard, can set to 98, 11, 14, or 17
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Set compiler flags to be strict about warnings
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -pedantic-errors -Werror")
-elseif (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w4")
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weverything")
-endif()
 
 # Use gold linker if available on system (it is faster than default GNU linker)
 if (UNIX AND NOT APPLE)
@@ -131,6 +122,7 @@ set(LIBRARIES
     CONAN_PKG::spdlog
     CONAN_PKG::CLI11
     project_options
+    project_warnings
 )
 
 add_executable(TemplateProject ${SRC_FILES} ${HDR_FILES})

@@ -72,10 +72,6 @@ int main(int argc, char **argv) {
 
   logger.flush();
 
-  int *prt = new int;
-
-  int k = 0x7fffffff;
-  k += argc;
-
   return 0;
 }
+
