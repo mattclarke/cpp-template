@@ -12,11 +12,18 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_17)
+
 # Find custom cmake modules
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
+# sanitizer options if supported by compiler
+include(cmake/Sanitizers.cmake)
+enable_sanitizers(project_options)
 
 # Set the CMake standard, can set to 98, 11, 14, or 17
 set(CMAKE_CXX_STANDARD 17)
@@ -88,7 +95,7 @@ endif()
 
 set(CONAN "AUTO" CACHE STRING "conan options AUTO (conan must be in path) or MANUAL (expects conanbuildinfo.cmake in build directory)")
 set(CONAN_PROFILE "default" CACHE STRING "Name of conan profile to use, uses default by default")
-include(${CMAKE_MODULE_PATH}/conan.cmake)
+include(cmake/conan.cmake)
 if (${CONAN} MATCHES "AUTO")
     conan_cmake_run(CONANFILE conanfile.txt
             PROFILE ${CONAN_PROFILE}
@@ -123,6 +130,7 @@ set(LIBRARIES
     CONAN_PKG::fmt
     CONAN_PKG::spdlog
     CONAN_PKG::CLI11
+    project_options
 )
 
 add_executable(TemplateProject ${SRC_FILES} ${HDR_FILES})
@@ -133,4 +141,4 @@ target_link_libraries(TemplateProject ${LIBRARIES})
 ###############################################################################
 
 add_executable(UnitTests tests/tests.cpp)
-target_link_libraries(UnitTests CONAN_PKG::catch2)
+target_link_libraries(UnitTests CONAN_PKG::Catch2)

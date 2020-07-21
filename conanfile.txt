@@ -1,5 +1,5 @@
 [requires]
-catch2/2.11.3
+Catch2/2.11.1@catchorg/stable
 fmt/6.1.2
 spdlog/1.5.0
 CLI11/1.9.0@cliutils/stable

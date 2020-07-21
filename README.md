@@ -65,3 +65,17 @@ From the build directory
 ```
 ./bin/TemplateProject --help
 ```
+
+## Sanitizers (Clang or gcc only)
+
+Add CMake options for:
+* Address sanitizer [ENABLE_SANITIZER_ADDRESS]
+* Leak sanitizer [ENABLE_SANITIZER_LEAK]
+* Memory sanitizer - cannot be used with Address, Thread or Leak sanitizer enabled [ENABLE_SANITIZER_MEMORY]
+* Thread sanitizer - cannot be used with Address or Leak sanitizer enabled [ENABLE_SANITIZER_THREAD]
+* Undefined behavior sanitizer [ENABLE_SANITIZER_UNDEFINED_BEHAVIOR]
+
+For example:
+```
+cmake -DNABLE_SANITIZER_LEAK:BOOL=True ..
+```
